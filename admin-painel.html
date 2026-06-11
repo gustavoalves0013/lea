@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel Admin — Centro Léa Rosenberg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --verde: #1A3A6B; --verde-claro: #2457A4; --verde-pale: #E3EEFF; --verde-mid: #9DBFF5;
+      --amarelo: #EF9F27; --amarelo-pale: #FAEEDA;
+      --creme: #FAF8F4; --branco: #FFFFFF;
+      --cinza-escuro: #2C2C2A; --cinza-medio: #5F5E5A; --cinza-claro: #B4B2A9;
+      --borda: rgba(15,110,86,0.12); --radius: 12px; --radius-lg: 18px;
+      --sidebar: 240px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--creme); color: var(--cinza-escuro); display: flex; min-height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar); min-height: 100vh;
+      background: var(--verde);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 50;
+      transition: transform 0.3s;
+    }
+    .sidebar-brand {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .sidebar-brand .mark {
+      width: 40px; height: 40px; background: rgba(255,255,255,0.15);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;
+    }
+    .sidebar-brand .mark svg { width: 22px; height: 22px; fill: white; }
+    .sidebar-brand strong { display: block; font-family: 'Playfair Display', serif; font-size: 14px; color: white; }
+    .sidebar-brand span { font-size: 11px; color: var(--verde-mid); }
+    .sidebar-nav { padding: 16px 12px; flex: 1; }
+    .nav-section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.4); padding: 12px 10px 6px; }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.75);
+      text-decoration: none; margin-bottom: 2px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .sidebar-nav a:hover, .sidebar-nav a.ativo { background: rgba(255,255,255,0.14); color: white; }
+    .sidebar-nav a svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
+    .sidebar-footer {
+      padding: 16px 12px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+    }
+    .sidebar-footer a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 13px; color: rgba(255,255,255,0.55);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .sidebar-footer a:hover { color: white; }
+    .sidebar-footer a svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+    .topbar {
+      background: white; border-bottom: 1px solid var(--borda);
+      padding: 0 28px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 40;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .topbar-title { font-size: 16px; font-weight: 600; color: var(--cinza-escuro); }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .user-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--creme); border: 1px solid var(--borda);
+      border-radius: 100px; padding: 5px 12px 5px 5px;
+    }
+    .user-pill .av {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--verde); color: white;
+      font-size: 12px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .user-pill span { font-size: 13px; font-weight: 500; color: var(--cinza-escuro); }
+    .btn-sair {
+      font-size: 13px; color: var(--cinza-claro);
+      background: none; border: none; cursor: pointer;
+      padding: 6px 10px; border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .btn-sair:hover { background: #FCEBEB; color: #A32D2D; }
+
+    .content { padding: 28px; flex: 1; }
+
+    /* ── PÁGINAS ── */
+    .page { display: none; }
+    .page.ativa { display: block; }
+
+    /* ── CARDS RESUMO ── */
+    .resumo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .resumo-card {
+      background: white; border-radius: var(--radius-lg);
+      padding: 20px 22px; border: 1px solid var(--borda);
+    }
+    .resumo-card .rlabel { font-size: 12px; font-weight: 600; color: var(--cinza-claro); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .resumo-card .rval { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--cinza-escuro); line-height: 1; }
+    .resumo-card .rsub { font-size: 12px; color: var(--cinza-claro); margin-top: 6px; }
+    .resumo-card.verde { border-left: 3px solid var(--verde); }
+    .resumo-card.amarelo { border-left: 3px solid var(--amarelo); }
+
+    /* ── SEÇÃO TÍTULO ── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+    }
+    .section-header h2 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--cinza-escuro); }
+    .btn-novo {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--verde); color: white;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      padding: 10px 18px; border: none; border-radius: var(--radius);
+      cursor: pointer; text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-novo:hover { background: var(--verde-claro); }
+    .btn-novo svg { width: 16px; height: 16px; fill: white; }
+
+    /* ── TABELA ── */
+    .tabela-wrap { background: white; border-radius: var(--radius-lg); border: 1px solid var(--borda); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--creme); }
+    thead th { padding: 12px 18px; font-size: 12px; font-weight: 600; color: var(--cinza-claro); text-transform: uppercase; letter-spacing: 0.06em; text-align: left; }
+    tbody td { padding: 14px 18px; font-size: 14px; color: var(--cinza-escuro); border-top: 1px solid var(--borda); }
+    tbody tr:hover { background: var(--creme); }
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+      padding: 3px 10px; border-radius: 100px;
+    }
+    .badge-ok { background: var(--verde-pale); color: var(--verde); }
+    .badge-pendente { background: var(--amarelo-pale); color: #BA7517; }
+    .badge-rascunho { background: #F1EFE8; color: #5F5E5A; }
+    .acoes { display: flex; gap: 6px; }
+    .btn-acao {
+      padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 500;
+      cursor: pointer; border: 1px solid transparent; transition: 0.2s;
+    }
+    .btn-editar { background: var(--verde-pale); color: var(--verde); border-color: var(--verde-mid); }
+    .btn-editar:hover { background: var(--verde); color: white; }
+    .btn-excluir { background: #FCEBEB; color: #A32D2D; border-color: #F7C1C1; }
+    .btn-excluir:hover { background: #A32D2D; color: white; }
+    .btn-ver { background: var(--amarelo-pale); color: #BA7517; border-color: #FAC775; }
+    .btn-ver:hover { background: var(--amarelo); color: white; }
+    .vazio { padding: 48px; text-align: center; color: var(--cinza-claro); font-size: 14px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(44,44,42,0.5); z-index: 200;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.aberto { display: flex; }
+    .modal {
+      background: white; border-radius: var(--radius-lg);
+      padding: 36px 32px; max-width: 620px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .modal-header h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--cinza-escuro); }
+    .btn-fechar { background: none; border: none; cursor: pointer; padding: 4px; color: var(--cinza-claro); font-size: 22px; line-height: 1; }
+    .btn-fechar:hover { color: var(--cinza-escuro); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-row.tres { grid-template-columns: 1fr 1fr 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--cinza-escuro); }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 11px 14px; border: 1.5px solid #E0DED6; border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--cinza-escuro);
+      background: var(--creme); outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--verde-claro); }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .form-group .hint { font-size: 11px; color: var(--cinza-claro); }
+    .upload-area {
+      border: 2px dashed #D3D1C7; border-radius: var(--radius);
+      padding: 24px; text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .upload-area:hover { border-color: var(--verde-claro); background: var(--verde-pale); }
+    .upload-area svg { width: 32px; height: 32px; fill: var(--cinza-claro); margin-bottom: 8px; }
+    .upload-area p { font-size: 13px; color: var(--cinza-medio); }
+    .upload-area span { font-size: 11px; color: var(--cinza-claro); }
+    .arquivo-selecionado { display: none; align-items: center; gap: 10px; background: var(--verde-pale); border-radius: 8px; padding: 10px 14px; margin-top: 8px; }
+    .arquivo-selecionado svg { width: 18px; height: 18px; fill: var(--verde); }
+    .arquivo-selecionado span { font-size: 13px; color: var(--verde); font-weight: 500; flex: 1; }
+    .arquivo-selecionado button { background: none; border: none; cursor: pointer; color: var(--cinza-claro); font-size: 18px; }
+    .divisor { height: 1px; background: var(--borda); margin: 20px 0; }
+    .modal-footer { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+    .btn-cancelar {
+      padding: 11px 22px; border-radius: var(--radius);
+      border: 1.5px solid var(--borda); background: transparent;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      color: var(--cinza-medio); cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-cancelar:hover { background: var(--creme); }
+    .btn-salvar {
+      padding: 11px 28px; border-radius: var(--radius);
+      border: none; background: var(--verde);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+      color: white; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-salvar:hover { background: var(--verde-claro); }
+
+    /* ── PÁGINA CONFIGURAÇÕES ── */
+    .config-card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--borda); padding: 28px 28px; margin-bottom: 20px; }
+    .config-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--cinza-escuro); margin-bottom: 6px; }
+    .config-card .desc { font-size: 13px; color: var(--cinza-claro); margin-bottom: 20px; }
+    .senha-wrap { max-width: 380px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--cinza-escuro); color: white;
+      padding: 14px 20px; border-radius: var(--radius);
+      font-size: 14px; display: flex; align-items: center; gap: 10px;
+      transform: translateY(80px); opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      z-index: 999;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.verde { background: var(--verde); }
+    .toast.erro { background: #A32D2D; }
+    .toast svg { width: 18px; height: 18px; fill: white; flex-shrink: 0; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.aberta { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 16px; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-row.tres { grid-template-columns: 1fr; }
+      .btn-burger-top { display: flex !important; }
+    }
+    .btn-burger-top {
+      display: none; background: none; border: none; cursor: pointer;
+      flex-direction: column; gap: 4px; padding: 6px;
+    }
+    .btn-burger-top span { display: block; width: 20px; height: 2px; background: var(--cinza-escuro); border-radius: 2px; }
+    .overlay-mobile { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 49; }
+    .overlay-mobile.vis { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+    </div>
+    <strong>Léa Rosenberg</strong>
+    <span>Painel Administrativo</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Principal</div>
+    <a href="#" onclick="irPara('dashboard')" id="nav-dashboard" class="ativo">
+      <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Início
+    </a>
+    <a href="#" onclick="irPara('prestacao');" id="nav-prestacao">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM9 13h6v2H9zm0 4h6v-2H9zm0-8h4v2H9z"/></svg>
+      Prestação de Contas
+    </a>
+    <div class="nav-section-label">Configurações</div>
+    <a href="#" onclick="irPara('configuracoes')" id="nav-configuracoes">
+      <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+      Configurações
+    </a>
+    <a href="index.html" target="_blank" id="nav-site">
+      <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+      Ver site público
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="#" onclick="sair()">
+      <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Sair
+    </a>
+  </div>
+</aside>
+
+<div class="overlay-mobile" id="overlayMobile" onclick="fecharSidebar()"></div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="btn-burger-top" id="burgerTop" onclick="abrirSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <span class="topbar-title" id="topbarTitle">Início</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-pill">
+        <div class="av" id="userAv">A</div>
+        <span id="userName">admin</span>
+      </div>
+      <button class="btn-sair" onclick="sair()">Sair</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page ativa" id="page-dashboard">
+      <div class="resumo-grid">
+        <div class="resumo-card verde">
+          <div class="rlabel">Relatórios publicados</div>
+          <div class="rval" id="stat-publicados">0</div>
+          <div class="rsub">Total no sistema</div>
+        </div>
+        <div class="resumo-card">
+          <div class="rlabel">Rascunhos</div>
+          <div class="rval" id="stat-rascunhos">0</div>
+          <div class="rsub">Aguardando publicação</div>
+        </div>
+        <div class="resumo-card amarelo">
+          <div class="rlabel">Último relatório</div>
+          <div class="rval" id="stat-ultimo" style="font-size:1.1rem;">—</div>
+          <div class="rsub">Publicado em</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>Relatórios recentes</h2>
+        <button class="btn-novo" onclick="irPara('prestacao')">
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Novo relatório
+        </button>
+      </div>
+      <div class="tabela-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mês / Ano</th>
+              <th>Receitas</th>
+              <th>Despesas</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-dash"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── PRESTAÇÃO DE CONTAS ── -->
+    <div class="page" id="page-prestacao">
+      <div class="section-header">
+        <h2>Prestação de Contas</h2>
+        <button class="btn-novo" onclick="abrirModal()">
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Novo relatório
+        </button>
+      </div>
+      <div class="tabela-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mês / Ano</th>
+              <th>Receitas</th>
+              <th>Despesas</th>
+              <th>Atendimentos</th>
+              <th>Arquivo</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-pc"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── CONFIGURAÇÕES ── -->
+    <div class="page" id="page-configuracoes">
+      <div class="config-card">
+        <h3>Alterar senha de acesso</h3>
+        <p class="desc">Atualize a senha de login do painel administrativo.</p>
+        <div class="senha-wrap">
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Usuário atual</label>
+            <input type="text" id="conf-usuario" readonly />
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label>Nova senha</label>
+            <input type="password" id="conf-nova-senha" placeholder="Mínimo 8 caracteres" />
+          </div>
+          <div class="form-group" style="margin-bottom:20px">
+            <label>Confirmar nova senha</label>
+            <input type="password" id="conf-conf-senha" placeholder="Repita a nova senha" />
+          </div>
+          <button class="btn-salvar" onclick="salvarSenha()">Salvar nova senha</button>
+        </div>
+      </div>
+
+      <div class="config-card">
+        <h3>Dados do site</h3>
+        <p class="desc">Informações de contato exibidas no site público.</p>
+        <div class="form-row" style="max-width:600px">
+          <div class="form-group">
+            <label>Telefone principal</label>
+            <input type="text" id="conf-tel1" placeholder="(11) 98250-7347" />
+          </div>
+          <div class="form-group">
+            <label>Telefone secundário</label>
+            <input type="text" id="conf-tel2" placeholder="(11) 4187-3835" />
+          </div>
+          <div class="form-group full">
+            <label>E-mail</label>
+            <input type="email" id="conf-email" placeholder="centroatendimentolea@gmail.com" />
+          </div>
+        </div>
+        <button class="btn-salvar" onclick="salvarDados()">Salvar dados</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ── MODAL NOVO/EDITAR RELATÓRIO ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitulo">Novo relatório</h3>
+      <button class="btn-fechar" onclick="fecharModal()">×</button>
+    </div>
+
+    <input type="hidden" id="field-id" />
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Mês *</label>
+        <select id="field-mes">
+          <option value="">Selecione...</option>
+          <option value="01">Janeiro</option><option value="02">Fevereiro</option>
+          <option value="03">Março</option><option value="04">Abril</option>
+          <option value="05">Maio</option><option value="06">Junho</option>
+          <option value="07">Julho</option><option value="08">Agosto</option>
+          <option value="09">Setembro</option><option value="10">Outubro</option>
+          <option value="11">Novembro</option><option value="12">Dezembro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Ano *</label>
+        <input type="number" id="field-ano" placeholder="2025" min="2000" max="2099" />
+      </div>
+    </div>
+
+    <div class="divisor"></div>
+    <p style="font-size:13px;font-weight:600;color:var(--cinza-escuro);margin-bottom:14px">Valores financeiros</p>
+
+    <div class="form-row tres">
+      <div class="form-group">
+        <label>Receitas (R$)</label>
+        <input type="text" id="field-receitas" placeholder="0,00" oninput="mascaraMoeda(this)" />
+      </div>
+      <div class="form-group">
+        <label>Despesas (R$)</label>
+        <input type="text" id="field-despesas" placeholder="0,00" oninput="mascaraMoeda(this)" />
+      </div>
+      <div class="form-group">
+        <label>Atendimentos</label>
+        <input type="number" id="field-atendimentos" placeholder="0" min="0" />
+      </div>
+    </div>
+
+    <div class="divisor"></div>
+    <p style="font-size:13px;font-weight:600;color:var(--cinza-escuro);margin-bottom:14px">Resumo das atividades</p>
+
+    <div class="form-row">
+      <div class="form-group full">
+        <label>Descrição do mês</label>
+        <textarea id="field-descricao" placeholder="Descreva as principais atividades realizadas no mês..."></textarea>
+      </div>
+    </div>
+
+    <div class="divisor"></div>
+    <p style="font-size:13px;font-weight:600;color:var(--cinza-escuro);margin-bottom:14px">Documento (PDF/Imagem)</p>
+
+    <div class="upload-area" onclick="document.getElementById('field-arquivo-input').click()">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      <p>Clique para anexar o relatório em PDF ou imagem</p>
+      <span>PDF, JPG, PNG — máximo 10MB</span>
+    </div>
+    <input type="file" id="field-arquivo-input" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="selecionarArquivo(this)" />
+    <div class="arquivo-selecionado" id="arquivo-selecionado">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      <span id="arquivo-nome">arquivo.pdf</span>
+      <button onclick="removerArquivo()" title="Remover">×</button>
+    </div>
+
+    <div class="divisor"></div>
+
+    <div class="form-group" style="margin-bottom:0">
+      <label>Status de publicação</label>
+      <select id="field-status">
+        <option value="publicado">Publicado (visível no site)</option>
+        <option value="rascunho">Rascunho (não visível)</option>
+      </select>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-salvar" onclick="salvarRelatorio()">Salvar relatório</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+  <span id="toast-msg">Salvo com sucesso!</span>
+</div>
+
+<script>
+  // ── AUTENTICAÇÃO ──────────────────────────────────────────────
+  const usuario = sessionStorage.getItem('lea_admin');
+  if (!usuario) { window.location.href = 'admin-login.html'; }
+  document.getElementById('userName').textContent = usuario;
+  document.getElementById('userAv').textContent = usuario.charAt(0).toUpperCase();
+  document.getElementById('conf-usuario').value = usuario;
+
+  function sair() {
+    sessionStorage.removeItem('lea_admin');
+    window.location.href = 'admin-login.html';
+  }
+
+  // ── DADOS (localStorage) ─────────────────────────────────────
+  const CHAVE = 'learosenberg_relatorios';
+  const MESES = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  function carregarRelatorios() {
+    try { return JSON.parse(localStorage.getItem(CHAVE)) || []; }
+    catch { return []; }
+  }
+
+  function salvarRelatoriosLS(lista) {
+    localStorage.setItem(CHAVE, JSON.stringify(lista));
+  }
+
+  // ── NAVEGAÇÃO ──────────────────────────────────────────────────
+  const titulos = { dashboard: 'Início', prestacao: 'Prestação de Contas', configuracoes: 'Configurações' };
+
+  function irPara(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('ativa'));
+    document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('ativo'));
+    document.getElementById('page-' + id).classList.add('ativa');
+    const navEl = document.getElementById('nav-' + id);
+    if (navEl) navEl.classList.add('ativo');
+    document.getElementById('topbarTitle').textContent = titulos[id] || '';
+    fecharSidebar();
+    if (id === 'dashboard') renderDashboard();
+    if (id === 'prestacao') renderTabelaPC();
+    if (id === 'configuracoes') carregarConfig();
+    return false;
+  }
+
+  // Mobile sidebar
+  function abrirSidebar() {
+    document.getElementById('sidebar').classList.add('aberta');
+    document.getElementById('overlayMobile').classList.add('vis');
+  }
+  function fecharSidebar() {
+    document.getElementById('sidebar').classList.remove('aberta');
+    document.getElementById('overlayMobile').classList.remove('vis');
+  }
+
+  // ── RENDER DASHBOARD ──────────────────────────────────────────
+  function renderDashboard() {
+    const lista = carregarRelatorios();
+    const pub = lista.filter(r => r.status === 'publicado');
+    const rasc = lista.filter(r => r.status === 'rascunho');
+    document.getElementById('stat-publicados').textContent = pub.length;
+    document.getElementById('stat-rascunhos').textContent = rasc.length;
+    const ult = [...lista].sort((a,b) => (b.ano+b.mes).localeCompare(a.ano+a.mes))[0];
+    document.getElementById('stat-ultimo').textContent = ult ? MESES[parseInt(ult.mes)] + '/' + ult.ano : '—';
+    const tbody = document.getElementById('tabela-dash');
+    const recentes = [...lista].sort((a,b) => (b.ano+b.mes).localeCompare(a.ano+a.mes)).slice(0, 5);
+    if (!recentes.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="vazio">Nenhum relatório cadastrado ainda.<br>Clique em "Novo relatório" para começar.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = recentes.map(r => `
+      <tr>
+        <td><strong>${MESES[parseInt(r.mes)]} ${r.ano}</strong></td>
+        <td>${r.receitas ? 'R$ ' + r.receitas : '—'}</td>
+        <td>${r.despesas ? 'R$ ' + r.despesas : '—'}</td>
+        <td><span class="badge badge-${r.status === 'publicado' ? 'ok' : 'rascunho'}">${r.status === 'publicado' ? 'Publicado' : 'Rascunho'}</span></td>
+        <td class="acoes">
+          <button class="btn-acao btn-editar" onclick="editarRelatorio('${r.id}')">Editar</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  // ── RENDER TABELA PC ──────────────────────────────────────────
+  function renderTabelaPC() {
+    const lista = carregarRelatorios();
+    const tbody = document.getElementById('tabela-pc');
+    const sorted = [...lista].sort((a,b) => (b.ano+b.mes).localeCompare(a.ano+a.mes));
+    if (!sorted.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="vazio">Nenhum relatório cadastrado.<br>Clique em "Novo relatório" para adicionar o primeiro.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = sorted.map(r => `
+      <tr>
+        <td><strong>${MESES[parseInt(r.mes)]} ${r.ano}</strong></td>
+        <td>${r.receitas ? 'R$ ' + r.receitas : '—'}</td>
+        <td>${r.despesas ? 'R$ ' + r.despesas : '—'}</td>
+        <td>${r.atendimentos || '—'}</td>
+        <td>${r.arquivo ? `<a href="${r.arquivo}" download="${r.arquivoNome || 'relatorio'}" style="color:var(--verde);font-size:13px;font-weight:500">📄 Baixar</a>` : '<span style="color:var(--cinza-claro);font-size:13px">Sem arquivo</span>'}</td>
+        <td><span class="badge badge-${r.status === 'publicado' ? 'ok' : r.status === 'pendente' ? 'pendente' : 'rascunho'}">${r.status === 'publicado' ? 'Publicado' : 'Rascunho'}</span></td>
+        <td class="acoes">
+          <button class="btn-acao btn-editar" onclick="editarRelatorio('${r.id}')">Editar</button>
+          <button class="btn-acao btn-excluir" onclick="excluirRelatorio('${r.id}')">Excluir</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  // ── MODAL ─────────────────────────────────────────────────────
+  let arquivoBase64 = null;
+  let arquivoNomeAtual = null;
+
+  function abrirModal(id) {
+    arquivoBase64 = null;
+    arquivoNomeAtual = null;
+    document.getElementById('arquivo-selecionado').style.display = 'none';
+    document.getElementById('field-arquivo-input').value = '';
+
+    if (id) {
+      const lista = carregarRelatorios();
+      const r = lista.find(x => x.id === id);
+      if (!r) return;
+      document.getElementById('modalTitulo').textContent = 'Editar relatório';
+      document.getElementById('field-id').value = r.id;
+      document.getElementById('field-mes').value = r.mes;
+      document.getElementById('field-ano').value = r.ano;
+      document.getElementById('field-receitas').value = r.receitas || '';
+      document.getElementById('field-despesas').value = r.despesas || '';
+      document.getElementById('field-atendimentos').value = r.atendimentos || '';
+      document.getElementById('field-descricao').value = r.descricao || '';
+      document.getElementById('field-status').value = r.status || 'publicado';
+      if (r.arquivo) {
+        arquivoBase64 = r.arquivo;
+        arquivoNomeAtual = r.arquivoNome || 'arquivo';
+        document.getElementById('arquivo-nome').textContent = arquivoNomeAtual;
+        document.getElementById('arquivo-selecionado').style.display = 'flex';
+      }
+    } else {
+      document.getElementById('modalTitulo').textContent = 'Novo relatório';
+      document.getElementById('field-id').value = '';
+      document.getElementById('field-mes').value = '';
+      document.getElementById('field-ano').value = new Date().getFullYear();
+      document.getElementById('field-receitas').value = '';
+      document.getElementById('field-despesas').value = '';
+      document.getElementById('field-atendimentos').value = '';
+      document.getElementById('field-descricao').value = '';
+      document.getElementById('field-status').value = 'publicado';
+    }
+    document.getElementById('modalOverlay').classList.add('aberto');
+  }
+
+  function fecharModal() {
+    document.getElementById('modalOverlay').classList.remove('aberto');
+  }
+
+  function editarRelatorio(id) { abrirModal(id); }
+
+  function excluirRelatorio(id) {
+    if (!confirm('Tem certeza que deseja excluir este relatório? Esta ação não pode ser desfeita.')) return;
+    let lista = carregarRelatorios().filter(r => r.id !== id);
+    salvarRelatoriosLS(lista);
+    renderTabelaPC();
+    renderDashboard();
+    mostrarToast('Relatório excluído.', 'erro');
+  }
+
+  function salvarRelatorio() {
+    const mes = document.getElementById('field-mes').value;
+    const ano = document.getElementById('field-ano').value;
+    if (!mes || !ano) { alert('Por favor, informe o mês e o ano.'); return; }
+
+    const id = document.getElementById('field-id').value || Date.now().toString();
+    const lista = carregarRelatorios();
+    const idx = lista.findIndex(r => r.id === id);
+
+    const novo = {
+      id,
+      mes,
+      ano,
+      receitas: document.getElementById('field-receitas').value,
+      despesas: document.getElementById('field-despesas').value,
+      atendimentos: document.getElementById('field-atendimentos').value,
+      descricao: document.getElementById('field-descricao').value,
+      status: document.getElementById('field-status').value,
+      arquivo: arquivoBase64,
+      arquivoNome: arquivoNomeAtual,
+      atualizadoEm: new Date().toLocaleDateString('pt-BR')
+    };
+
+    if (idx >= 0) lista[idx] = novo;
+    else lista.push(novo);
+
+    salvarRelatoriosLS(lista);
+    fecharModal();
+    renderTabelaPC();
+    renderDashboard();
+    mostrarToast('Relatório salvo com sucesso!', 'verde');
+  }
+
+  // ── UPLOAD ────────────────────────────────────────────────────
+  function selecionarArquivo(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) { alert('Arquivo muito grande. Máximo 10MB.'); return; }
+    arquivoNomeAtual = file.name;
+    const reader = new FileReader();
+    reader.onload = e => {
+      arquivoBase64 = e.target.result;
+      document.getElementById('arquivo-nome').textContent = file.name;
+      document.getElementById('arquivo-selecionado').style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removerArquivo() {
+    arquivoBase64 = null;
+    arquivoNomeAtual = null;
+    document.getElementById('arquivo-selecionado').style.display = 'none';
+    document.getElementById('field-arquivo-input').value = '';
+  }
+
+  // ── MÁSCARA MOEDA ─────────────────────────────────────────────
+  function mascaraMoeda(el) {
+    let v = el.value.replace(/\D/g, '');
+    v = (parseInt(v || 0) / 100).toFixed(2);
+    el.value = v.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  // ── CONFIGURAÇÕES ─────────────────────────────────────────────
+  function carregarConfig() {
+    const cfg = JSON.parse(localStorage.getItem('lea_config') || '{}');
+    document.getElementById('conf-tel1').value = cfg.tel1 || '';
+    document.getElementById('conf-tel2').value = cfg.tel2 || '';
+    document.getElementById('conf-email').value = cfg.email || '';
+  }
+
+  function salvarDados() {
+    const cfg = {
+      tel1: document.getElementById('conf-tel1').value,
+      tel2: document.getElementById('conf-tel2').value,
+      email: document.getElementById('conf-email').value
+    };
+    localStorage.setItem('lea_config', JSON.stringify(cfg));
+    mostrarToast('Dados salvos!', 'verde');
+  }
+
+  function salvarSenha() {
+    const nova = document.getElementById('conf-nova-senha').value;
+    const conf = document.getElementById('conf-conf-senha').value;
+    if (!nova || nova.length < 8) { alert('A senha deve ter pelo menos 8 caracteres.'); return; }
+    if (nova !== conf) { alert('As senhas não coincidem.'); return; }
+    mostrarToast('Senha atualizada! Lembre de anotar.', 'verde');
+    document.getElementById('conf-nova-senha').value = '';
+    document.getElementById('conf-conf-senha').value = '';
+  }
+
+  // ── TOAST ─────────────────────────────────────────────────────
+  let toastTimer;
+  function mostrarToast(msg, tipo = '') {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.className = 'toast ' + tipo;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────
+  renderDashboard();
+
+  // Fechar modal clicando fora
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) fecharModal();
+  });
+</script>
+</body>
+</html>

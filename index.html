@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centro de Atendimento Especializado lea Rosenberg</title>
+  <meta name="description" content="ONG dedicada ao atendimento de pessoas com deficiência e em vulnerabilidade social em Carapicuíba/SP desde 1987." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* CORES PRINCIPAIS (Mantidos os tons de azul escuro e médio originais) */
+      --verde: #1A3A6B;
+      --verde-claro: #2457A4;
+      
+      /* NOVOS TONS DE AZUL CLARO E SUAVE */
+      --verde-pale: #D1E4FC;      /* Azul celeste suave para destaques/hover */
+      --verde-mid: #9DBFF5;       /* Azul médio para elementos gráficos */
+      --creme: #EDF4FC;           /* NOVO FUNDO: Azul claro acinzentado de alto contraste */
+      --branco: #FFFFFF;
+      
+      /* PALETA DE SUPORTE E ALERTA */
+      --amarelo: #EF9F27;
+      --amarelo-pale: #FAEEDA;
+      
+      /* TEXTOS - Tons escuros garantindo excelente contraste sobre o azul claro */
+      --cinza-escuro: #1A1C1E;    /* Escurecido levemente para aumentar o contraste */
+      --cinza-medio: #43474E;     /* Ajustado para melhor legibilidade */
+      --cinza-claro: #74777F;     /* Cinza médio-claro para bordas secundárias */
+      
+      /* ESTRUTURA */
+      --borda: rgba(26, 58, 107, 0.15);
+      --sombra: 0 4px 24px rgba(26, 58, 107, 0.08);
+      --radius: 12px;
+      --radius-lg: 20px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--creme);
+      color: var(--cinza-escuro);
+      line-height: 1.7;
+    }
+
+    /* ── NAV ────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--borda);
+      padding: 0 2rem;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;        /* Alinha verticalmente o logo e o texto ao lado */
+      gap: 12px;
+      text-decoration: none;
+      height: 100%;               /* Faz o link ocupar a altura total disponível */
+    }
+
+    .nav-logo-img {
+      height: 60px;               /* Altura máxima ideal para caber dentro dos 68px do nav */
+      width: auto;                /* Mantém a proporção exata da largura sem distorcer */
+      object-fit: contain;        /* Garante que o conteúdo caiba perfeitamente no espaço */
+      background: var(--branco);  /* Mantém o fundo branco interno do logo */
+      padding: 4px 8px;           /* Dá um respiro interno para o logo não tocar nas bordas */
+      border-radius: 8px;         /* Arredonda os cantos do logo de forma suave */
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06); /* Adiciona uma sombra leve para dar profundidade */
+      
+      display: block;             /* Remove espaços fantasmas de elementos de texto */
+      flex-shrink: 0;             /* Impede que o logo seja esmagado em ecrãs pequenos */
+    }
+
+
+    .nav-logo-mark {
+      width: 40px;
+      height: 40px;
+      background: var(--verde);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .nav-logo-mark svg { width: 22px; height: 22px; fill: white; }
+    .nav-logo-text { line-height: 1.2; }
+    .nav-logo-text strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: var(--verde);
+    }
+    .nav-logo-text span {
+      font-size: 11px;
+      color: var(--cinza-medio);
+      letter-spacing: 0.03em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 0;
+      list-style: none;
+    }
+    .nav-links a {
+      display: block;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--cinza-medio);
+      text-decoration: none;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: var(--verde); background: var(--verde-pale); }
+    .nav-cta {
+      background: var(--verde) !important;
+      color: white !important;
+      border-radius: 8px;
+      padding: 8px 18px !important;
+    }
+    .nav-cta:hover { background: var(--verde-claro) !important; }
+    .nav-burger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .nav-burger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--cinza-escuro);
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+
+    .btn-whatsapp {
+      position: fixed;        /* Fixa o botão na tela para não acompanhar o scroll */
+      bottom: 24px;           /* Distância da margem inferior */
+      right: 24px;            /* Distância da margem direita */
+      background: #25D366;    /* Cor verde oficial do WhatsApp */
+      color: white;           /* Cor do ícone em formato SVG */
+      width: 60px;            /* Largura total do botão */
+      height: 60px;           /* Altura total do botão */
+      border-radius: 50%;     /* Torna o formato num círculo perfeito */
+      display: flex;          /* Facilita o alinhamento interno */
+      align-items: center;    /* Centraliza o ícone verticalmente */
+      justify-content: center;/* Centraliza o ícone horizontalmente */
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4); /* Sombra elegante que combina com o verde */
+      z-index: 1000;          /* Nível de sobreposição alto: garante que fique acima de mapas ou rodapés */
+      transition: transform 0.3s ease, background 0.3s ease; /* Transição suave na animação */
+    }
+
+    /* Animação ao passar o rato (hover) */
+    .btn-whatsapp:hover {
+      background: #1EBE55;    /* Escurece levemente para dar sensação de clique */
+      transform: scale(1.1);  /* Aumenta o tamanho em 10% de forma animada */
+    }
+
+    /* Ajuste para dispositivos móveis (ecrãs mais pequenos) */
+    @media (max-width: 768px) {
+      .btn-whatsapp {
+        bottom: 16px;         /* Reduz a distância na margem para telemóveis */
+        right: 16px;
+        width: 50px;          /* Diminui ligeiramente o tamanho do botão */
+        height: 50px;
+      }
+      .btn-whatsapp svg {
+        width: 24px;          /* Reduz também o ícone para manter a proporção */
+        height: 24px;
+      }
+    }
+
+    /* ── HERO ───────────────────────────────────────────────── */
+    .hero {
+      background: var(--verde);
+      position: relative;
+      overflow: hidden;
+      padding: 100px 2rem 80px;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 80% 20%, rgba(36,87,164,0.4) 0%, transparent 55%),
+        radial-gradient(circle at 10% 80%, rgba(255,255,255,0.05) 0%, transparent 40%);
+    }
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--verde-mid);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--verde-mid);
+      border-radius: 50%;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--verde-mid);
+    }
+    .hero p {
+      color: rgba(255,255,255,0.80);
+      font-size: 17px;
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--amarelo);
+      color: #1A1C1E;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(239,159,39,0.35); }
+    .btn-ghost {
+      background: transparent;
+      color: white;
+      font-weight: 500;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.6); }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      backdrop-filter: blur(4px);
+    }
+    .stat-card .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      color: white;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-card .label {
+      font-size: 13px;
+      color: var(--verde-mid);
+      font-weight: 500;
+    }
+    .stat-card.accent { background: rgba(239,159,39,0.20); border-color: rgba(239,159,39,0.35); }
+    .stat-card.accent .label { color: #FAC775; }
+
+    /* ── SECTION BASE ───────────────────────────────────────── */
+    section { padding: 80px 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--verde-claro);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      color: var(--cinza-escuro);
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 16px;
+      color: var(--cinza-medio);
+      max-width: 580px;
+      margin-bottom: 48px;
+    }
+
+    /* ── SOBRE ──────────────────────────────────────────────── */
+    #sobre { background: white; }
+    .sobre-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .sobre-visual {
+      position: relative;
+    }
+    .sobre-img-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: linear-gradient(135deg, var(--verde-pale) 0%, var(--verde-mid) 100%);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .sobre-img-placeholder svg {
+      width: 80px;
+      height: 80px;
+      opacity: 0.4;
+      fill: var(--verde);
+    }
+    .sobre-badge {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      background: var(--amarelo);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--sombra);
+    }
+    .sobre-badge .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--cinza-escuro);
+      display: block;
+      line-height: 1;
+    }
+    .sobre-badge .txt {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cinza-medio);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .sobre-text blockquote {
+      border-left: 3px solid var(--verde-claro);
+      padding-left: 18px;
+      margin: 24px 0;
+      font-size: 15px;
+      color: var(--cinza-medio);
+      font-style: italic;
+    }
+    .sobre-text p { color: var(--cinza-medio); margin-bottom: 16px; font-size: 15.5px; }
+
+    /* ── SERVIÇOS ───────────────────────────────────────────── */
+    #servicos { background: var(--creme); }
+    .servicos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .servico-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      border: 1px solid var(--borda);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .servico-card:hover { transform: translateY(-4px); box-shadow: var(--sombra); }
+    .servico-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--verde-pale);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .servico-icon svg { width: 28px; height: 28px; fill: var(--verde); }
+    .servico-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--cinza-escuro);
+      margin-bottom: 12px;
+    }
+    .servico-card p { font-size: 14px; color: var(--cinza-medio); line-height: 1.65; }
+    .servico-list {
+      list-style: none;
+      margin-top: 12px;
+    }
+    .servico-list li {
+      font-size: 13.5px;
+      color: var(--cinza-medio);
+      padding: 4px 0;
+      padding-left: 16px;
+      position: relative;
+    }
+    .servico-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 13px;
+      width: 6px;
+      height: 6px;
+      background: var(--verde-claro);
+      border-radius: 50%;
+    }
+
+    /* ── PRESTAÇÃO DE CONTAS ────────────────────────────────── */
+    #prestacao { background: white; }
+    .pc-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+      margin-bottom: 56px;
+    }
+    .pc-highlight {
+      background: var(--verde-pale);
+      border: 1px solid var(--verde-mid);
+      border-radius: var(--radius-lg);
+      padding: 28px 28px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .pc-highlight .icon {
+      width: 44px;
+      height: 44px;
+      background: var(--verde);
+      border-radius: 10px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pc-highlight .icon svg { width: 22px; height: 22px; fill: white; }
+    .pc-highlight h4 { font-size: 15px; font-weight: 600; color: var(--verde); margin-bottom: 6px; }
+    .pc-highlight p { font-size: 14px; color: #0D2B5E; }
+    .pc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .pc-card {
+      border: 1px solid var(--borda);
+      border-radius: var(--radius);
+      padding: 24px;
+      background: var(--creme);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: box-shadow 0.2s;
+    }
+    .pc-card:hover { box-shadow: var(--sombra); }
+    .pc-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pc-card-month {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--cinza-escuro);
+    }
+    .pc-card-year {
+      font-size: 13px;
+      color: var(--cinza-medio);
+      font-weight: 500;
+    }
+    .pc-card-status {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+    .status-ok { background: var(--verde-pale); color: var(--verde); }
+    .pc-card-items { display: flex; flex-direction: column; gap: 6px; }
+    .pc-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+    .pc-item .key { color: var(--cinza-medio); }
+    .pc-item .val { font-weight: 500; color: var(--cinza-escuro); }
+    .pc-card-actions { display: flex; gap: 10px; margin-top: 4px; }
+    .btn-sm {
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-sm-primary { background: var(--verde); color: white; border-color: var(--verde); }
+    .btn-sm-primary:hover { background: var(--verde-claro); }
+    .btn-sm-ghost { background: transparent; color: var(--verde); border-color: var(--borda); }
+    .btn-sm-ghost:hover { background: var(--verde-pale); }
+    .pc-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px;
+      color: var(--cinza-medio);
+      font-size: 15px;
+    }
+
+    /* ── COMO AJUDAR ────────────────────────────────────────── */
+    #ajudar { background: var(--verde); position: relative; overflow: hidden; }
+    #ajudar::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .ajudar-inner { position: relative; }
+    .ajudar-inner .section-title { color: white; }
+    .ajudar-inner .section-sub { color: rgba(255,255,255,0.70); max-width: 600px; }
+    .ajudar-inner .section-label { color: var(--verde-mid); }
+    .ajudar-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .ajudar-card {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      transition: background 0.2s;
+    }
+    .ajudar-card:hover { background: rgba(255,255,255,0.15); }
+    .ajudar-card .icon {
+      width: 52px;
+      height: 52px;
+      background: rgba(255,255,255,0.15);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .ajudar-card .icon svg { width: 26px; height: 26px; fill: var(--verde-mid); }
+    .ajudar-card h3 { color: white; font-size: 1.1rem; margin-bottom: 10px; font-family: 'Playfair Display', serif; }
+    .ajudar-card p { color: rgba(255,255,255,0.70); font-size: 14px; line-height: 1.65; }
+    .ajudar-card a.btn-card {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--verde-mid);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+    .ajudar-card a.btn-card:hover { text-decoration: underline; }
+
+    /* ── CONTATO ────────────────────────────────────────────── */
+    #contato { background: var(--creme); }
+    .contato-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .contato-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--cinza-escuro);
+      margin-bottom: 24px;
+    }
+    .contato-item {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+    .contato-item .ico {
+      width: 40px;
+      height: 40px;
+      background: var(--verde-pale);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contato-item .ico svg { width: 20px; height: 20px; fill: var(--verde); }
+    .contato-item .txt strong { display: block; font-size: 13px; font-weight: 600; color: var(--cinza-escuro); }
+    .contato-item .txt span { font-size: 14px; color: var(--cinza-medio); }
+    .redes {
+      display: flex;
+      gap: 10px;
+      margin-top: 32px;
+    }
+    .rede-link {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--verde-pale);
+      border: 1px solid var(--borda);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    .rede-link:hover { background: var(--verde); }
+    .rede-link:hover svg { fill: white; }
+    .rede-link svg { width: 18px; height: 18px; fill: var(--verde); transition: fill 0.2s; }
+    .contato-form {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      border: 1px solid var(--borda);
+      box-shadow: var(--sombra);
+    }
+    .contato-form h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 24px;
+      color: var(--cinza-escuro);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--cinza-escuro); }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      padding: 12px 14px;
+      border: 1.5px solid #D1E4FC;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--cinza-escuro);
+      background: var(--branco);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--verde-claro); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .btn-submit {
+      width: 100%;
+      background: var(--verde);
+      color: white;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-submit:hover { background: var(--verde-claro); transform: translateY(-1px); }
+
+    /* ── FOOTER ─────────────────────────────────────────────── */
+    footer {
+      background: var(--cinza-escuro);
+      color: rgba(255,255,255,0.60);
+      padding: 48px 2rem 32px;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      margin-bottom: 32px;
+    }
+    .footer-brand strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: white;
+      margin-bottom: 10px;
+    }
+    .footer-brand p { font-size: 14px; line-height: 1.7; max-width: 300px; }
+    .footer-col h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--verde-mid); }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-bottom p { font-size: 13px; }
+    .footer-cnpj { font-size: 12px; }
+
+    /* ── MOBILE ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 68px; left: 0; right: 0; background: white; padding: 16px; border-bottom: 1px solid var(--borda); gap: 4px; }
+      .nav-links.open { display: flex; }
+      .nav-burger { display: flex; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-stats { grid-template-columns: 1fr 1fr; }
+      .sobre-grid { grid-template-columns: 1fr; }
+      .sobre-badge { bottom: 0; right: 0; }
+      .pc-intro { grid-template-columns: 1fr; }
+      .ajudar-cards { grid-template-columns: 1fr; }
+      .contato-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* ── ANIMAÇÕES ──────────────────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#inicio" class="nav-logo">
+      <!-- Substituição do SVG antigo pela tag img com o link direto da imagem -->
+      <img src="https://i.ibb.co/hJQSGpqc/image.png" alt="Logótipo lea Rosenberg" class="nav-logo-img" />
+      
+      <div class="nav-logo-text">
+        <strong>lea Rosenberg</strong>
+        <span>Centro de Atendimento</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#sobre">Sobre Nós</a></li>
+      <li><a href="#servicos">Serviços</a></li>
+      <li><a href="#prestacao">Prestação de Contas</a></li>
+      <li><a href="#contato">Contato</a></li>
+      <li><a href="#ajudar" class="nav-cta">Doe Agora</a></li>
+    </ul>
+    <button class="nav-burger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="hero" id="inicio">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">Desde 1987 em Carapicuíba/SP</div>
+      <h1>Onde há <em>coração</em>,<br>há esperança</h1>
+      <p>O Centro de Atendimento Especializado lea Rosenberg atende pessoas com deficiência e em vulnerabilidade social, transformando vidas com cuidado, inclusão e dignidade.</p>
+      <div class="hero-actions">
+        <a href="#ajudar" class="btn-primary">Faça uma doação</a>
+        <a href="#sobre" class="btn-ghost">Conheça nossa história</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="num">37+</div>
+        <div class="label">Anos de história</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="num">∞</div>
+        <div class="label">Vidas impactadas</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">100%</div>
+        <div class="label">Transparência</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">6</div>
+        <div class="label">Áreas de atendimento</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sobre">
+  <div class="container">
+    <div class="sobre-grid fade-in">
+      <div class="sobre-visual">
+        <div class="sobre-img-placeholder">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        </div>
+        <div class="sobre-badge">
+          <span class="num">1987</span>
+          <span class="txt">Fundação</span>
+        </div>
+      </div>
+      <div class="sobre-text">
+        <div class="section-label">Nossa história</div>
+        <h2 class="section-title">Trabalhando por um futuro mais inclusivo</h2>
+        <p>O Centro de Atendimento Especializado lea Rosenberg iniciou suas atividades em <strong>29 de agosto de 1987</strong>, criado pelo grupo de Senhoras Estrela Azul, com a finalidade de atender pessoas com deficiência intelectual.</p>
+        <blockquote>"Sendo a mudança que precisamos ver — nossa missão é transformar vidas com cuidado e inclusão."</blockquote>
+        <p>Nossa fundação surgiu da necessidade de pais que não tinham onde deixar seus filhos com deficiência, e pela mobilização da população frente à realidade dessas famílias.</p>
+        <p>Hoje atendemos pessoas com deficiência e em vulnerabilidade social, oferecendo serviços de psicologia, serviço social, psicopedagogia, oficinas e muito mais — sempre com qualidade e acessibilidade.</p>
+        <a href="#servicos" class="btn-primary" style="margin-top:8px; font-size:14px; padding:12px 24px;">Ver nossos serviços</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="servicos">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">O que fazemos</div>
+      <h2 class="section-title">Serviços e atendimentos</h2>
+      <p class="section-sub">Oferecemos atendimento multidisciplinar para pessoas com deficiência, famílias e a comunidade em geral.</p>
+    </div>
+    <div class="servicos-grid fade-in">
+
+      <div class="servico-card">
+        <div class="servico-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        </div>
+        <h3>Atendimento Psicológico</h3>
+        <p>Psicoterapia individual para todas as idades, inclusive para pessoas com deficiência. Valores acessíveis para associados e não associados.</p>
+      </div>
+
+      <div class="servico-card">
+        <div class="servico-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+        </div>
+        <h3>Psicopedagogia</h3>
+        <p>Avaliação e intervenção em dificuldades de aprendizagem como dislexia, disgrafia, disortografia e discalculia em crianças, adolescentes e adultos.</p>
+      </div>
+
+      <div class="servico-card">
+        <div class="servico-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+        </div>
+        <h3>Serviço Social</h3>
+        <p>Democratizamos o acesso ao serviço social, orientando famílias, realizando encaminhamentos e apoiando pessoas em situação de vulnerabilidade.</p>
+      </div>
+
+      <div class="servico-card">
+        <div class="servico-icon">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        </div>
+        <h3>Grupos Terapêuticos</h3>
+        <ul class="servico-list">
+          <li>Grupo para adolescentes</li>
+          <li>Grupo da terceira idade</li>
+          <li>Grupo de mãe e cuidadores</li>
+        </ul>
+      </div>
+
+      <div class="servico-card">
+        <div class="servico-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+        </div>
+        <h3>Pessoa com Deficiência</h3>
+        <ul class="servico-list">
+          <li>Inclusão digital</li>
+          <li>Culinária e artesanato</li>
+          <li>Atividades de vida diária</li>
+          <li>Educação física adaptada</li>
+          <li>Vida prática (transporte, compras)</li>
+        </ul>
+      </div>
+
+      <div class="servico-card">
+        <div class="servico-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        </div>
+        <h3>Desenvolvimento Comunitário</h3>
+        <p>Ações voltadas para a comunidade de Carapicuíba, promovendo cidadania, direitos e melhores condições de vida para todos.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="prestacao">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">Transparência</div>
+      <h2 class="section-title">Prestação de contas</h2>
+    </div>
+    <div class="pc-intro fade-in">
+      <div>
+        <p class="section-sub" style="margin-bottom:0">Acreditamos que a transparência é a base da confiança. Aqui publicamos mensalmente todos os relatórios financeiros e de atividades do Centro.</p>
+      </div>
+      <div class="pc-highlight">
+        <div class="icon">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </div>
+        <div>
+          <h4>Compromisso com a transparência</h4>
+          <p>Todos os relatórios são publicados até o dia 10 do mês seguinte, em conformidade com as exigências para ONGs.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+      <label style="font-size:13px;font-weight:600;color:var(--cinza-escuro);">Filtrar por ano:</label>
+      <select id="filtro-ano" onchange="renderPrestacoes()" style="padding:8px 14px;border:1.5px solid #D1E4FC;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--cinza-escuro);background:var(--branco);outline:none;">
+        <option value="">Todos</option>
+      </select>
+    </div>
+
+    <div class="pc-grid fade-in" id="pc-grid-publico">
+      <div class="pc-card" style="border-style:dashed;opacity:0.5;grid-column:1/-1;">
+        <div class="pc-empty">
+          <div style="font-size:2rem;margin-bottom:8px;">📋</div>
+          Os relatórios mensais aparecerão aqui quando publicados pela equipe.
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px;font-size:13px;color:var(--cinza-claro);text-align:center;">
+      ℹ️ Relatórios publicados mensalmente pela equipe. Em caso de dúvidas, <a href="#contato" style="color:var(--verde);">entre em contato</a>.
+    </p>
+  </div>
+</section>
+
+<section id="ajudar">
+  <div class="container ajudar-inner">
+    <div class="fade-in">
+      <div class="section-label">Faça parte</div>
+      <h2 class="section-title">Como você pode ajudar</h2>
+      <p class="section-sub">Cada contribuição faz diferença real na vida de pessoas com deficiência e em vulnerabilidade social em Carapicuíba.</p>
+    </div>
+    <div class="ajudar-cards fade-in">
+
+      <div class="ajudar-card">
+        <div class="icon">
+          <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+        </div>
+        <h3>Faça uma doação</h3>
+        <p>Sua doação financia atendimentos, oficinas e materiais para pessoas com deficiência e em vulnerabilidade social. Qualquer valor ajuda.</p>
+        <a href="#contato" class="btn-card">Entre em contato →</a>
+      </div>
+
+      <div class="ajudar-card">
+        <div class="icon">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        </div>
+        <h3>Seja voluntário</h3>
+        <p>Contribua com seu tempo e habilidades. Buscamos profissionais da saúde, educação, tecnologia e pessoas dispostas a fazer a diferença.</p>
+        <a href="#contato" class="btn-card">Quero ser voluntário →</a>
+      </div>
+
+      <div class="ajudar-card">
+        <div class="icon">
+          <svg viewBox="0 0 24 24"><path d="M22 9V7h-2V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2v-2h-2V9h2zm-4 10H4V5h14v14z"/></svg>
+        </div>
+        <h3>Faça uma parceria</h3>
+        <p>Empresas e instituições podem firmar parcerias conosco, contribuindo com recursos, serviços ou visibilidade para nossa missão.</p>
+        <a href="#contato" class="btn-card">Fale conosco →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="contato">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">Fale conosco</div>
+      <h2 class="section-title">Entre em contato</h2>
+    </div>
+    <div class="contato-grid fade-in">
+      <div class="contato-info">
+        <h3>Estamos aqui para ajudar</h3>
+
+        <div class="contato-item">
+          <div class="ico">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          </div>
+          <div class="txt">
+            <strong>Endereço</strong>
+            <span>R. Araguari, 23 — Conj. Hab. Pres. Castelo Branco<br>Carapicuíba — SP, 06327-130</span>
+          </div>
+        </div>
+
+        <div class="contato-item">
+          <div class="ico">
+            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          </div>
+          <div class="txt">
+            <strong>Telefone</strong>
+            <span>(11) 98250-7347 / (11) 4187-3835</span>
+          </div>
+        </div>
+
+        <div class="contato-item">
+          <div class="ico">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          </div>
+          <div class="txt">
+            <strong>E-mail</strong>
+            <span>centroatendimentolea@gmail.com</span>
+          </div>
+        </div>
+
+        <div class="redes">
+          <a href="https://www.facebook.com/lea.rosenberg.180" target="_blank" class="rede-link" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://instagram.com/inst.learosenberg" target="_blank" class="rede-link" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path fill="none" stroke-width="2" d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://maps.google.com/?cid=10992496628948455124" target="_blank" class="rede-link" aria-label="Google Maps">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="contato-form">
+        <h3>Envie uma mensagem</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" placeholder="Seu nome completo" />
+          </div>
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" placeholder="seu@email.com" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tel">Telefone</label>
+            <input type="tel" id="tel" placeholder="(11) 99999-9999" />
+          </div>
+          <div class="form-group">
+            <label for="assunto">Assunto</label>
+            <select id="assunto">
+              <option value="">Selecione...</option>
+              <option>Atendimento psicológico</option>
+              <option>Serviço social</option>
+              <option>Psicopedagogia</option>
+              <option>Doação</option>
+              <option>Parceria</option>
+              <option>Voluntariado</option>
+              <option>Outro</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label for="msg">Mensagem</label>
+            <textarea id="msg" placeholder="Como podemos ajudar?"></textarea>
+          </div>
+        </div>
+        <button class="btn-submit" onclick="enviarFormulario()">Enviar mensagem</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <strong>Centro de Atendimento Especializado lea Rosenberg</strong>
+        <p>Transformando vidas com cuidado, inclusão e dignidade desde 1987. Uma ONG comprometida com pessoas com deficiência e em vulnerabilidade social em Carapicuíba/SP.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="#sobre">Sobre Nós</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#prestacao">Prestação de Contas</a></li>
+          <li><a href="#ajudar">Como Ajudar</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <ul>
+          <li><a href="tel:11982507347">(11) 98250-7347</a></li>
+          <li><a href="tel:1141873835">(11) 4187-3835</a></li>
+          <li><a href="mailto:centroatendimentolea@gmail.com">centroatendimentolea@gmail.com</a></li>
+          <li><a href="#">R. Araguari, 23 — Carapicuíba/SP</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Centro de Atendimento Especializado lea Rosenberg. Todos os direitos reservados.</p>
+      <p class="footer-cnpj">ONG sem fins lucrativos — Carapicuíba/SP  ·  <a href="admin-login.html" style="color:rgba(255,255,255,0.25);text-decoration:none;font-size:11px;" title="Área administrativa">Admin</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── MENU MOBILE ───────────────────────────────────────────────
+  document.getElementById('burger').addEventListener('click', function() {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+  });
+
+  // ── ANIMAÇÕES SCROLL ──────────────────────────────────────────
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // ── FORMULÁRIO DE CONTATO ─────────────────────────────────────
+  function enviarFormulario() {
+    const nome  = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const msg   = document.getElementById('msg').value.trim();
+    if (!nome || !email || !msg) {
+      mostrarAlerta('Por favor, preencha nome, e-mail e mensagem.', 'erro');
+      return;
+    }
+    const dest   = 'centroatendimentolea@gmail.com';
+    const assunto = document.getElementById('assunto').value || 'Contato pelo site';
+    const corpo  = `Nome: ${nome}\nE-mail: ${email}\nTelefone: ${document.getElementById('tel').value}\n\n${msg}`;
+    window.location.href = `mailto:${dest}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+    mostrarAlerta('Abrindo seu aplicativo de e-mail...', 'ok');
+  }
+
+  // ── ALERTA INLINE ─────────────────────────────────────────────
+  function mostrarAlerta(msg, tipo) {
+    let al = document.getElementById('form-alerta');
+    if (!al) {
+      al = document.createElement('div');
+      al.id = 'form-alerta';
+      al.style.cssText = 'padding:12px 16px;border-radius:8px;font-size:13px;margin-top:10px;font-weight:500';
+      document.querySelector('.btn-submit').after(al);
+    }
+    al.textContent = msg;
+    al.style.background = tipo === 'ok' ? 'var(--verde-pale)' : '#FCEBEB';
+    al.style.color = tipo === 'ok' ? 'var(--verde)' : '#A32D2D';
+    al.style.display = 'block';
+    setTimeout(() => { al.style.display = 'none'; }, 4000);
+  }
+
+  // ── MODAL DETALHE RELATÓRIO ───────────────────────────────────
+  function abrirDetalhe(id) {
+    const lista = carregarRelatorios();
+    const r = lista.find(x => x.id === id);
+    if (!r) return;
+    const MESES = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const saldo = calcularSaldo(r.receitas, r.despesas);
+
+    document.getElementById('det-titulo').textContent = MESES[parseInt(r.mes)] + ' / ' + r.ano;
+    document.getElementById('det-receitas').textContent  = r.receitas  ? 'R$ ' + r.receitas  : 'Não informado';
+    document.getElementById('det-despesas').textContent  = r.despesas  ? 'R$ ' + r.despesas  : 'Não informado';
+    document.getElementById('det-saldo').textContent     = saldo !== null ? 'R$ ' + saldo : '—';
+    document.getElementById('det-atend').textContent     = r.atendimentos ? r.atendimentos + ' pessoas' : 'Não informado';
+    document.getElementById('det-descricao').textContent = r.descricao || 'Nenhuma descrição fornecida.';
+    document.getElementById('det-data').textContent      = r.atualizadoEm ? 'Publicado em: ' + r.atualizadoEm : '';
+
+    const btnBaixar = document.getElementById('det-baixar');
+    if (r.arquivo) {
+      btnBaixar.style.display = 'flex';
+      btnBaixar.href = r.arquivo;
+      btnBaixar.download = r.arquivoNome || 'relatorio.pdf';
+    } else {
+      btnBaixar.style.display = 'none';
+    }
+    document.getElementById('modalDetalhe').classList.add('aberto');
+  }
+
+  function fecharDetalhe() {
+    document.getElementById('modalDetalhe').classList.remove('aberto');
+  }
+
+  function calcularSaldo(rec, desp) {
+    if (!rec && !desp) return null;
+    const r = parseFloat((rec || '0').replace(/\./g,'').replace(',','.')) || 0;
+    const d = parseFloat((desp || '0').replace(/\./g,'').replace(',','.')) || 0;
+    const s = r - d;
+    return s.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+  }
+
+  // ── CARREGAR DADOS DO localStorage ───────────────────────────
+  const CHAVE = 'learosenberg_relatorios';
+  const MESES_N = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  function carregarRelatorios() {
+    try { return JSON.parse(localStorage.getItem(CHAVE)) || []; }
+    catch { return []; }
+  }
+
+  // ── RENDER PRESTAÇÕES NO SITE PÚBLICO ─────────────────────────
+  function renderPrestacoes() {
+    const lista = carregarRelatorios().filter(r => r.status === 'publicado');
+    const filtroAno = document.getElementById('filtro-ano').value;
+
+    const anos = [...new Set(lista.map(r => r.ano))].sort((a,b) => b-a);
+    const sel = document.getElementById('filtro-ano');
+    const valorAtual = sel.value;
+    sel.innerHTML = '<option value="">Todos os anos</option>' + anos.map(a => `<option value="${a}" ${a == valorAtual ? 'selected' : ''}>${a}</option>`).join('');
+
+    const filtrados = filtroAno ? lista.filter(r => r.ano == filtroAno) : lista;
+    const sorted = [...filtrados].sort((a,b) => (b.ano+b.mes).localeCompare(a.ano+a.mes));
+    const grid = document.getElementById('pc-grid-publico');
+
+    if (!sorted.length) {
+      grid.innerHTML = `
+        <div class="pc-card" style="border-style:dashed;opacity:0.5;grid-column:1/-1;">
+          <div class="pc-empty">
+            <div style="font-size:2rem;margin-bottom:8px;">📋</div>
+            ${filtroAno ? 'Nenhum relatório publicado em ' + filtroAno + '.' : 'Os relatórios mensais aparecerão aqui quando publicados pela equipe.'}
+          </div>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = sorted.map(r => {
+      const saldo = calcularSaldo(r.receitas, r.despesas);
+      const saldoPositivo = saldo !== null && !saldo.startsWith('-');
+      return `
+        <div class="pc-card">
+          <div class="pc-card-header">
+            <div>
+              <div class="pc-card-month">${MESES_N[parseInt(r.mes)]}</div>
+              <div class="pc-card-year">${r.ano}</div>
+            </div>
+            <span class="pc-card-status status-ok">Publicado</span>
+          </div>
+          <div class="pc-card-items">
+            <div class="pc-item"><span class="key">Receitas</span><span class="val">${r.receitas ? 'R$ ' + r.receitas : '—'}</span></div>
+            <div class="pc-item"><span class="key">Despesas</span><span class="val">${r.despesas ? 'R$ ' + r.despesas : '—'}</span></div>
+            ${saldo !== null ? `<div class="pc-item"><span class="key">Saldo</span><span class="val" style="color:${saldoPositivo ? 'var(--verde)' : '#A32D2D'};font-weight:600">R$ ${saldo}</span></div>` : ''}
+            ${r.atendimentos ? `<div class="pc-item"><span class="key">Atendimentos</span><span class="val">${r.atendimentos} pessoas</span></div>` : ''}
+          </div>
+          <div class="pc-card-actions">
+            <button class="btn-sm btn-sm-primary" onclick="abrirDetalhe('${r.id}')">Ver detalhes</button>
+            ${r.arquivo ? `<a href="${r.arquivo}" download="${r.arquivoNome || 'relatorio'}" class="btn-sm btn-sm-ghost">Baixar PDF</a>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  renderPrestacoes();
+
+  window.addEventListener('focus', renderPrestacoes);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) renderPrestacoes();
+  });
+
+  document.getElementById('modalDetalhe').addEventListener('click', function(e) {
+    if (e.target === this) fecharDetalhe();
+  });
+</script>
+
+<div id="modalDetalhe" style="display:none;position:fixed;inset:0;background:rgba(44,44,42,0.55);z-index:300;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:20px;padding:36px 32px;max-width:500px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--verde-claro);margin-bottom:4px;">Relatório mensal</div>
+        <h3 id="det-titulo" style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--cinza-escuro);"></h3>
+      </div>
+      <button onclick="fecharDetalhe()" style="background:none;border:none;cursor:pointer;font-size:24px;color:var(--cinza-claro);padding:4px;line-height:1;">×</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div style="background:var(--verde-pale);border-radius:12px;padding:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--verde);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Receitas</div>
+        <div id="det-receitas" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cinza-escuro);"></div>
+      </div>
+      <div style="background:#FCEBEB;border-radius:12px;padding:16px;">
+        <div style="font-size:11px;font-weight:600;color:#A32D2D;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Despesas</div>
+        <div id="det-despesas" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cinza-escuro);"></div>
+      </div>
+      <div style="background:var(--amarelo-pale);border-radius:12px;padding:16px;">
+        <div style="font-size:11px;font-weight:600;color:#BA7517;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Saldo</div>
+        <div id="det-saldo" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cinza-escuro);"></div>
+      </div>
+      <div style="background:#F1EFE8;border-radius:12px;padding:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--cinza-medio);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Atendimentos</div>
+        <div id="det-atend" style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--cinza-escuro);"></div>
+      </div>
+    </div>
+
+    <div style="background:var(--creme);border-radius:12px;padding:16px 18px;margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--cinza-escuro);margin-bottom:8px;">Resumo das atividades</div>
+      <p id="det-descricao" style="font-size:14px;color:var(--cinza-medio);line-height:1.65;"></p>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <a id="det-baixar" href="#" download style="display:none;align-items:center;gap:8px;background:var(--verde);color:white;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;padding:11px 22px;border-radius:10px;text-decoration:none;">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:white"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Baixar documento
+      </a>
+      <button onclick="fecharDetalhe()" style="padding:11px 22px;border-radius:10px;border:1.5px solid var(--borda);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--cinza-medio);cursor:pointer;">Fechar</button>
+      <span id="det-data" style="font-size:12px;color:var(--cinza-claro);margin-left:auto;"></span>
+    </div>
+  </div>
+</div>
+<!-- ── BOTÃO WHATSAPP FLUTUANTE ── -->
+<!-- O link contém o código do país (55), o DDD (11) e o número. Também tem uma mensagem pré-programada. -->
+<a href="https://wa.me/5511982507347?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20o%20Centro%20L%C3%A9a%20Rosenberg." 
+   class="btn-whatsapp" 
+   target="_blank" 
+   aria-label="Fale connosco pelo WhatsApp">
+  
+  <!-- Ícone oficial do WhatsApp em formato SVG -->
+  <svg viewBox="0 0 24 24" width="28" height="28">
+    <path fill="currentColor" d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-5.824 4.74-10.563 10.564-10.563 5.826 0 10.564 4.738 10.564 10.564 0 5.826-4.739 10.564-10.564 10.564z"/>
+  </svg>
+</a>
+
+<style>
+  #modalDetalhe.aberto { display: flex !important; }
+</style>
+
+</body>
+</html>

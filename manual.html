@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual do Site — Centro Léa Rosenberg</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --verde: #1A3A6B; --verde-pale: #E3EEFF; --amarelo:#EF9F27; --amarelo-pale:#FAEEDA; --creme:#FAF8F4; --cinza:#2C2C2A; --cinza-m:#5F5E5A; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'DM Sans',sans-serif; background:var(--creme); color:var(--cinza); line-height:1.7; }
+    .topo { background:var(--verde); padding:40px 2rem; text-align:center; }
+    .topo h1 { font-family:'Playfair Display',serif; color:white; font-size:2rem; margin-bottom:8px; }
+    .topo p { color:rgba(255,255,255,0.75); font-size:15px; }
+    .container { max-width:780px; margin:0 auto; padding:48px 2rem; }
+    .step { background:white; border-radius:16px; border:1px solid rgba(15,110,86,0.12); padding:28px 28px; margin-bottom:20px; }
+    .step-num { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; background:var(--verde); color:white; border-radius:50%; font-size:14px; font-weight:700; margin-bottom:14px; }
+    .step h2 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--cinza); margin-bottom:10px; }
+    .step p { font-size:14.5px; color:var(--cinza-m); margin-bottom:10px; }
+    .step ul { padding-left:20px; }
+    .step li { font-size:14px; color:var(--cinza-m); margin-bottom:6px; }
+    .destaque { background:var(--verde-pale); border-left:3px solid var(--verde); border-radius:8px; padding:14px 18px; margin:12px 0; font-size:14px; color:#0D2B5E; }
+    .aviso { background:var(--amarelo-pale); border-left:3px solid var(--amarelo); border-radius:8px; padding:14px 18px; margin:12px 0; font-size:14px; color:#7A5010; }
+    .cred { display:inline-block; background:#F1EFE8; border-radius:6px; padding:3px 10px; font-family:monospace; font-size:14px; font-weight:600; color:var(--cinza); }
+    .btn-link { display:inline-block; background:var(--verde); color:white; font-size:14px; font-weight:600; padding:10px 22px; border-radius:8px; text-decoration:none; margin-top:10px; }
+  </style>
+</head>
+<body>
+<div class="topo">
+  <h1>📋 Manual do Site</h1>
+  <p>Centro de Atendimento Especializado Léa Rosenberg</p>
+</div>
+<div class="container">
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <h2>Como acessar o painel administrativo</h2>
+    <p>Para entrar na área de administração do site, acesse o endereço do site e clique em <strong>"Admin"</strong> no rodapé (parte de baixo da página), ou acesse diretamente:</p>
+    <div class="destaque">📌 Endereço do painel: <strong>seusite.com.br/admin-login.html</strong></div>
+    <p>Na tela de login, use as credenciais abaixo:</p>
+    <p>Usuário: <span class="cred">admin</span> &nbsp; Senha: <span class="cred">learosenberg2025</span></p>
+    <div class="aviso">⚠️ Troque a senha após o primeiro acesso! Vá em <strong>Configurações → Alterar senha</strong>.</div>
+    <p>Existe também um segundo usuário exclusivo para publicar prestações de contas:</p>
+    <p>Usuário: <span class="cred">funcionaria</span> &nbsp; Senha: <span class="cred">prestacao2025</span></p>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <h2>Como publicar uma nova Prestação de Contas</h2>
+    <p>Este é o principal uso do painel. Siga os passos:</p>
+    <ul>
+      <li>Faça login no painel administrativo</li>
+      <li>Clique em <strong>"Prestação de Contas"</strong> no menu lateral</li>
+      <li>Clique no botão verde <strong>"Novo relatório"</strong></li>
+      <li>Preencha: <strong>Mês</strong>, <strong>Ano</strong>, <strong>Receitas</strong>, <strong>Despesas</strong> e <strong>Atendimentos</strong></li>
+      <li>No campo <strong>"Descrição do mês"</strong>, escreva um breve resumo das atividades</li>
+      <li>Se tiver um PDF ou imagem do relatório oficial, clique em <strong>"Anexar"</strong> e selecione o arquivo</li>
+      <li>Em <strong>"Status"</strong>, selecione <strong>"Publicado"</strong> para aparecer no site</li>
+      <li>Clique em <strong>"Salvar relatório"</strong></li>
+    </ul>
+    <div class="destaque">✅ Após salvar, o relatório aparece automaticamente na página "Prestação de Contas" do site público, sem precisar fazer mais nada!</div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <h2>Como editar ou corrigir um relatório já publicado</h2>
+    <ul>
+      <li>Vá em <strong>Prestação de Contas</strong> no menu lateral</li>
+      <li>Encontre o mês que deseja corrigir na tabela</li>
+      <li>Clique no botão <strong>"Editar"</strong></li>
+      <li>Faça as correções e clique em <strong>"Salvar relatório"</strong></li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <h2>Como excluir um relatório</h2>
+    <p>Na tabela de Prestação de Contas, clique no botão vermelho <strong>"Excluir"</strong> ao lado do relatório. O sistema pedirá confirmação antes de apagar.</p>
+    <div class="aviso">⚠️ A exclusão é permanente e não pode ser desfeita. Tenha certeza antes de confirmar.</div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <h2>Dicas importantes</h2>
+    <ul>
+      <li>Os dados ficam salvos no navegador do computador (localStorage). Se trocar de computador ou limpar o histórico do navegador, os dados podem ser perdidos. Recomendamos fazer backup periodicamente.</li>
+      <li>Para ter os dados em qualquer computador, o ideal é hospedar o site em um servidor com banco de dados — converse com o técnico responsável.</li>
+      <li>Sempre que salvar um relatório, verifique no site público se ele apareceu corretamente.</li>
+      <li>O link <strong>"Ver site público"</strong> na barra lateral abre o site em uma nova aba para conferência.</li>
+      <li>Publique os relatórios até o dia 10 do mês seguinte.</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <h2>Estrutura dos arquivos do site</h2>
+    <ul>
+      <li><strong>index.html</strong> — Página principal (site público)</li>
+      <li><strong>admin-login.html</strong> — Tela de login do painel</li>
+      <li><strong>admin-painel.html</strong> — Painel administrativo completo</li>
+      <li><strong>manual.html</strong> — Este manual</li>
+    </ul>
+    <div class="destaque">📁 Todos esses arquivos devem estar na mesma pasta no servidor de hospedagem.</div>
+  </div>
+
+  <p style="text-align:center;font-size:13px;color:#B4B2A9;margin-top:32px;">
+    Manual do site — Centro de Atendimento Especializado Léa Rosenberg · Carapicuíba/SP
+  </p>
+</div>
+</body>
+</html>

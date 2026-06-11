@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administração — Centro Léa Rosenberg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --verde: #1A3A6B; --verde-claro: #2457A4; --verde-pale: #E3EEFF;
+      --amarelo: #EF9F27; --creme: #FAF8F4; --branco: #FFFFFF;
+      --cinza-escuro: #2C2C2A; --cinza-medio: #5F5E5A; --cinza-claro: #B4B2A9;
+      --borda: rgba(15,110,86,0.15); --radius: 12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--creme);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-wrap {
+      width: 100%;
+      max-width: 420px;
+    }
+    .login-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .login-logo .mark {
+      width: 56px; height: 56px;
+      background: var(--verde);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .login-logo .mark svg { width: 28px; height: 28px; fill: white; }
+    .login-logo h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--cinza-escuro);
+    }
+    .login-logo p { font-size: 13px; color: var(--cinza-claro); margin-top: 4px; }
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 36px;
+      border: 1px solid var(--borda);
+      box-shadow: 0 8px 40px rgba(15,110,86,0.10);
+    }
+    .login-card h2 { font-size: 1.1rem; font-weight: 600; color: var(--cinza-escuro); margin-bottom: 24px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--cinza-escuro); margin-bottom: 7px; }
+    .form-group input {
+      width: 100%; padding: 13px 16px;
+      border: 1.5px solid #E0DED6;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; color: var(--cinza-escuro);
+      background: var(--creme); outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--verde-claro); }
+    .btn-login {
+      width: 100%; background: var(--verde); color: white;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+      padding: 14px; border: none; border-radius: var(--radius);
+      cursor: pointer; margin-top: 8px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-login:hover { background: var(--verde-claro); transform: translateY(-1px); }
+    .erro { display:none; background:#FCEBEB; border:1px solid #F7C1C1; border-radius:8px; padding:10px 14px; font-size:13px; color:#A32D2D; margin-bottom:16px; }
+    .back-link { text-align:center; margin-top:20px; }
+    .back-link a { font-size:13px; color:var(--cinza-claro); text-decoration:none; }
+    .back-link a:hover { color:var(--verde); }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      </div>
+      <h1>Léa Rosenberg</h1>
+      <p>Área administrativa</p>
+    </div>
+    <div class="login-card">
+      <h2>Entrar no painel</h2>
+      <div class="erro" id="erro">Usuário ou senha incorretos.</div>
+      <div class="form-group">
+        <label for="usuario">Usuário</label>
+        <input type="text" id="usuario" placeholder="admin" autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+    </div>
+    <div class="back-link"><a href="index.html">← Voltar ao site</a></div>
+  </div>
+  <script>
+    // Credenciais padrão — TROQUE após hospedar!
+    // Usuário: admin  |  Senha: learosenberg2025
+    const USUARIOS = { admin: 'learosenberg2025', funcionaria: 'prestacao2025' };
+
+    document.getElementById('senha').addEventListener('keydown', e => {
+      if (e.key === 'Enter') fazerLogin();
+    });
+
+    function fazerLogin() {
+      const u = document.getElementById('usuario').value.trim();
+      const s = document.getElementById('senha').value;
+      if (USUARIOS[u] && USUARIOS[u] === s) {
+        sessionStorage.setItem('lea_admin', u);
+        window.location.href = 'admin-painel.html';
+      } else {
+        document.getElementById('erro').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
