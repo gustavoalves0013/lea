@@ -94,8 +94,8 @@
       <h2>Entrar no painel</h2>
       <div class="erro" id="erro">Usuário ou senha incorretos.</div>
       <div class="form-group">
-        <label for="usuario">Usuário</label>
-        <input type="text" id="usuario" placeholder="admin" autocomplete="username" />
+        <label for="usuario">E-mail</label>
+        <input type="email" id="usuario" placeholder="seuemail@exemplo.com" autocomplete="username" />
       </div>
       <div class="form-group">
         <label for="senha">Senha</label>
@@ -105,23 +105,47 @@
     </div>
     <div class="back-link"><a href="index.html">← Voltar ao site</a></div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Credenciais padrão — TROQUE após hospedar!
-    // Usuário: admin  |  Senha: learosenberg2025
-    const USUARIOS = { admin: 'learosenberg2025', funcionaria: 'prestacao2025' };
+    // ── CONEXÃO COM O SUPABASE ─────────────────────────────────
+    // Estas duas informações não são secretas — foram feitas para
+    // ficar visíveis no código do site. A segurança real vem das
+    // políticas configuradas no banco de dados (RLS).
+    const SUPABASE_URL = 'https://yaioclkjtulvlspxntju.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_65RexbhxK3sN_Q0-bjLcBg_kGaJ3FyN';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Se já tem sessão ativa, pula direto pro painel
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) window.location.href = 'admin-painel.html';
+    });
 
     document.getElementById('senha').addEventListener('keydown', e => {
       if (e.key === 'Enter') fazerLogin();
     });
+    document.getElementById('usuario').addEventListener('keydown', e => {
+      if (e.key === 'Enter') fazerLogin();
+    });
 
-    function fazerLogin() {
-      const u = document.getElementById('usuario').value.trim();
-      const s = document.getElementById('senha').value;
-      if (USUARIOS[u] && USUARIOS[u] === s) {
-        sessionStorage.setItem('lea_admin', u);
-        window.location.href = 'admin-painel.html';
+    async function fazerLogin() {
+      const email = document.getElementById('usuario').value.trim();
+      const senha = document.getElementById('senha').value;
+      const erro = document.getElementById('erro');
+      erro.style.display = 'none';
+
+      const btn = document.querySelector('.btn-login');
+      btn.disabled = true;
+      btn.textContent = 'Entrando...';
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
+
+      if (error) {
+        erro.textContent = 'E-mail ou senha incorretos.';
+        erro.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Entrar';
       } else {
-        document.getElementById('erro').style.display = 'block';
+        window.location.href = 'admin-painel.html';
       }
     }
   </script>

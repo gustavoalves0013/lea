@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Centro de Atendimento Especializado lea Rosenberg</title>
@@ -1205,8 +1206,7 @@
 
   // ── MODAL DETALHE RELATÓRIO ───────────────────────────────────
   function abrirDetalhe(id) {
-    const lista = carregarRelatorios();
-    const r = lista.find(x => x.id === id);
+    const r = relatoriosCache.find(x => x.id === id);
     if (!r) return;
     const MESES = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
     const saldo = calcularSaldo(r.receitas, r.despesas);
@@ -1217,13 +1217,14 @@
     document.getElementById('det-saldo').textContent     = saldo !== null ? 'R$ ' + saldo : '—';
     document.getElementById('det-atend').textContent     = r.atendimentos ? r.atendimentos + ' pessoas' : 'Não informado';
     document.getElementById('det-descricao').textContent = r.descricao || 'Nenhuma descrição fornecida.';
-    document.getElementById('det-data').textContent      = r.atualizadoEm ? 'Publicado em: ' + r.atualizadoEm : '';
+    document.getElementById('det-data').textContent      = r.atualizado_em ? 'Publicado em: ' + r.atualizado_em : '';
 
     const btnBaixar = document.getElementById('det-baixar');
-    if (r.arquivo) {
+    if (r.arquivo_url) {
       btnBaixar.style.display = 'flex';
-      btnBaixar.href = r.arquivo;
-      btnBaixar.download = r.arquivoNome || 'relatorio.pdf';
+      btnBaixar.href = r.arquivo_url;
+      btnBaixar.removeAttribute('download');
+      btnBaixar.target = '_blank';
     } else {
       btnBaixar.style.display = 'none';
     }
@@ -1242,18 +1243,26 @@
     return s.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
   }
 
-  // ── CARREGAR DADOS DO localStorage ───────────────────────────
-  const CHAVE = 'learosenberg_relatorios';
+  // ── CONEXÃO COM O SUPABASE ─────────────────────────────────────
+  const SUPABASE_URL = 'https://yaioclkjtulvlspxntju.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_65RexbhxK3sN_Q0-bjLcBg_kGaJ3FyN';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const MESES_N = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
-  function carregarRelatorios() {
-    try { return JSON.parse(localStorage.getItem(CHAVE)) || []; }
-    catch { return []; }
+  let relatoriosCache = [];
+
+  async function carregarRelatorios() {
+    // A política do banco já garante que só relatórios "publicado"
+    // são retornados para quem não está logado.
+    const { data, error } = await supabase.from('relatorios').select('*');
+    if (error) { console.error(error); return []; }
+    relatoriosCache = data;
+    return data;
   }
 
   // ── RENDER PRESTAÇÕES NO SITE PÚBLICO ─────────────────────────
-  function renderPrestacoes() {
-    const lista = carregarRelatorios().filter(r => r.status === 'publicado');
+  async function renderPrestacoes() {
+    const lista = (await carregarRelatorios()).filter(r => r.status === 'publicado');
     const filtroAno = document.getElementById('filtro-ano').value;
 
     const anos = [...new Set(lista.map(r => r.ano))].sort((a,b) => b-a);
@@ -1296,7 +1305,7 @@
           </div>
           <div class="pc-card-actions">
             <button class="btn-sm btn-sm-primary" onclick="abrirDetalhe('${r.id}')">Ver detalhes</button>
-            ${r.arquivo ? `<a href="${r.arquivo}" download="${r.arquivoNome || 'relatorio'}" class="btn-sm btn-sm-ghost">Baixar PDF</a>` : ''}
+            ${r.arquivo_url ? `<a href="${r.arquivo_url}" target="_blank" class="btn-sm btn-sm-ghost">Baixar PDF</a>` : ''}
           </div>
         </div>`;
     }).join('');

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel Admin — Centro Léa Rosenberg</title>
@@ -532,35 +533,45 @@
 </div>
 
 <script>
-  // ── AUTENTICAÇÃO ──────────────────────────────────────────────
-  const usuario = sessionStorage.getItem('lea_admin');
-  if (!usuario) { window.location.href = 'admin-login.html'; }
-  document.getElementById('userName').textContent = usuario;
-  document.getElementById('userAv').textContent = usuario.charAt(0).toUpperCase();
-  document.getElementById('conf-usuario').value = usuario;
+  // ── CONEXÃO COM O SUPABASE ─────────────────────────────────────
+  const SUPABASE_URL = 'https://yaioclkjtulvlspxntju.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_65RexbhxK3sN_Q0-bjLcBg_kGaJ3FyN';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  function sair() {
-    sessionStorage.removeItem('lea_admin');
+  // ── AUTENTICAÇÃO ──────────────────────────────────────────────
+  let usuario = null;
+
+  async function protegerPagina() {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) { window.location.href = 'admin-login.html'; return; }
+    usuario = data.session.user.email;
+    document.getElementById('userName').textContent = usuario;
+    document.getElementById('userAv').textContent = usuario.charAt(0).toUpperCase();
+    document.getElementById('conf-usuario').value = usuario;
+    renderDashboard();
+  }
+  protegerPagina();
+
+  async function sair() {
+    await supabase.auth.signOut();
     window.location.href = 'admin-login.html';
   }
 
-  // ── DADOS (localStorage) ─────────────────────────────────────
-  const CHAVE = 'learosenberg_relatorios';
+  // ── DADOS (Supabase) ────────────────────────────────────────────
   const MESES = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  let relatoriosCache = [];
 
-  function carregarRelatorios() {
-    try { return JSON.parse(localStorage.getItem(CHAVE)) || []; }
-    catch { return []; }
-  }
-
-  function salvarRelatoriosLS(lista) {
-    localStorage.setItem(CHAVE, JSON.stringify(lista));
+  async function carregarRelatorios() {
+    const { data, error } = await supabase.from('relatorios').select('*');
+    if (error) { console.error(error); mostrarToast('Erro ao carregar dados.', 'erro'); return []; }
+    relatoriosCache = data;
+    return data;
   }
 
   // ── NAVEGAÇÃO ──────────────────────────────────────────────────
   const titulos = { dashboard: 'Início', prestacao: 'Prestação de Contas', configuracoes: 'Configurações' };
 
-  function irPara(id) {
+  async function irPara(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('ativa'));
     document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('ativo'));
     document.getElementById('page-' + id).classList.add('ativa');
@@ -568,8 +579,8 @@
     if (navEl) navEl.classList.add('ativo');
     document.getElementById('topbarTitle').textContent = titulos[id] || '';
     fecharSidebar();
-    if (id === 'dashboard') renderDashboard();
-    if (id === 'prestacao') renderTabelaPC();
+    if (id === 'dashboard') await renderDashboard();
+    if (id === 'prestacao') await renderTabelaPC();
     if (id === 'configuracoes') carregarConfig();
     return false;
   }
@@ -585,8 +596,8 @@
   }
 
   // ── RENDER DASHBOARD ──────────────────────────────────────────
-  function renderDashboard() {
-    const lista = carregarRelatorios();
+  async function renderDashboard() {
+    const lista = await carregarRelatorios();
     const pub = lista.filter(r => r.status === 'publicado');
     const rasc = lista.filter(r => r.status === 'rascunho');
     document.getElementById('stat-publicados').textContent = pub.length;
@@ -612,8 +623,8 @@
   }
 
   // ── RENDER TABELA PC ──────────────────────────────────────────
-  function renderTabelaPC() {
-    const lista = carregarRelatorios();
+  async function renderTabelaPC() {
+    const lista = await carregarRelatorios();
     const tbody = document.getElementById('tabela-pc');
     const sorted = [...lista].sort((a,b) => (b.ano+b.mes).localeCompare(a.ano+a.mes));
     if (!sorted.length) {
@@ -626,7 +637,7 @@
         <td>${r.receitas ? 'R$ ' + r.receitas : '—'}</td>
         <td>${r.despesas ? 'R$ ' + r.despesas : '—'}</td>
         <td>${r.atendimentos || '—'}</td>
-        <td>${r.arquivo ? `<a href="${r.arquivo}" download="${r.arquivoNome || 'relatorio'}" style="color:var(--verde);font-size:13px;font-weight:500">📄 Baixar</a>` : '<span style="color:var(--cinza-claro);font-size:13px">Sem arquivo</span>'}</td>
+        <td>${r.arquivo_url ? `<a href="${r.arquivo_url}" target="_blank" style="color:var(--verde);font-size:13px;font-weight:500">📄 Baixar</a>` : '<span style="color:var(--cinza-claro);font-size:13px">Sem arquivo</span>'}</td>
         <td><span class="badge badge-${r.status === 'publicado' ? 'ok' : r.status === 'pendente' ? 'pendente' : 'rascunho'}">${r.status === 'publicado' ? 'Publicado' : 'Rascunho'}</span></td>
         <td class="acoes">
           <button class="btn-acao btn-editar" onclick="editarRelatorio('${r.id}')">Editar</button>
@@ -636,18 +647,21 @@
   }
 
   // ── MODAL ─────────────────────────────────────────────────────
-  let arquivoBase64 = null;
+  let arquivoUrlAtual = null;   // URL já salva no storage (edição)
   let arquivoNomeAtual = null;
+  let arquivoNovoFile = null;   // arquivo novo escolhido, ainda não enviado
+  let arquivoRemovido = false;  // usuário marcou pra remover o anexo existente
 
   function abrirModal(id) {
-    arquivoBase64 = null;
+    arquivoUrlAtual = null;
     arquivoNomeAtual = null;
+    arquivoNovoFile = null;
+    arquivoRemovido = false;
     document.getElementById('arquivo-selecionado').style.display = 'none';
     document.getElementById('field-arquivo-input').value = '';
 
     if (id) {
-      const lista = carregarRelatorios();
-      const r = lista.find(x => x.id === id);
+      const r = relatoriosCache.find(x => x.id === id);
       if (!r) return;
       document.getElementById('modalTitulo').textContent = 'Editar relatório';
       document.getElementById('field-id').value = r.id;
@@ -658,9 +672,9 @@
       document.getElementById('field-atendimentos').value = r.atendimentos || '';
       document.getElementById('field-descricao').value = r.descricao || '';
       document.getElementById('field-status').value = r.status || 'publicado';
-      if (r.arquivo) {
-        arquivoBase64 = r.arquivo;
-        arquivoNomeAtual = r.arquivoNome || 'arquivo';
+      if (r.arquivo_url) {
+        arquivoUrlAtual = r.arquivo_url;
+        arquivoNomeAtual = r.arquivo_nome || 'arquivo';
         document.getElementById('arquivo-nome').textContent = arquivoNomeAtual;
         document.getElementById('arquivo-selecionado').style.display = 'flex';
       }
@@ -684,26 +698,48 @@
 
   function editarRelatorio(id) { abrirModal(id); }
 
-  function excluirRelatorio(id) {
+  async function excluirRelatorio(id) {
     if (!confirm('Tem certeza que deseja excluir este relatório? Esta ação não pode ser desfeita.')) return;
-    let lista = carregarRelatorios().filter(r => r.id !== id);
-    salvarRelatoriosLS(lista);
-    renderTabelaPC();
-    renderDashboard();
+    const { error } = await supabase.from('relatorios').delete().eq('id', id);
+    if (error) { console.error(error); mostrarToast('Erro ao excluir.', 'erro'); return; }
+    await renderTabelaPC();
+    await renderDashboard();
     mostrarToast('Relatório excluído.', 'erro');
   }
 
-  function salvarRelatorio() {
+  async function salvarRelatorio() {
     const mes = document.getElementById('field-mes').value;
     const ano = document.getElementById('field-ano').value;
     if (!mes || !ano) { alert('Por favor, informe o mês e o ano.'); return; }
 
-    const id = document.getElementById('field-id').value || Date.now().toString();
-    const lista = carregarRelatorios();
-    const idx = lista.findIndex(r => r.id === id);
+    const btnSalvar = document.querySelector('.btn-salvar');
+    btnSalvar.disabled = true;
+    btnSalvar.textContent = 'Salvando...';
 
-    const novo = {
-      id,
+    // Se o usuário escolheu um arquivo novo, envia pro storage primeiro
+    if (arquivoNovoFile) {
+      const nomeArquivo = `${Date.now()}_${arquivoNovoFile.name}`;
+      const { error: erroUpload } = await supabase.storage
+        .from('relatorios-arquivos')
+        .upload(nomeArquivo, arquivoNovoFile);
+      if (erroUpload) {
+        console.error(erroUpload);
+        mostrarToast('Erro ao enviar o arquivo.', 'erro');
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = 'Salvar relatório';
+        return;
+      }
+      const { data: pub } = supabase.storage.from('relatorios-arquivos').getPublicUrl(nomeArquivo);
+      arquivoUrlAtual = pub.publicUrl;
+      arquivoNomeAtual = arquivoNovoFile.name;
+    }
+    if (arquivoRemovido) {
+      arquivoUrlAtual = null;
+      arquivoNomeAtual = null;
+    }
+
+    const id = document.getElementById('field-id').value;
+    const registro = {
       mes,
       ano,
       receitas: document.getElementById('field-receitas').value,
@@ -711,18 +747,23 @@
       atendimentos: document.getElementById('field-atendimentos').value,
       descricao: document.getElementById('field-descricao').value,
       status: document.getElementById('field-status').value,
-      arquivo: arquivoBase64,
-      arquivoNome: arquivoNomeAtual,
-      atualizadoEm: new Date().toLocaleDateString('pt-BR')
+      arquivo_url: arquivoUrlAtual,
+      arquivo_nome: arquivoNomeAtual,
+      atualizado_em: new Date().toLocaleDateString('pt-BR')
     };
 
-    if (idx >= 0) lista[idx] = novo;
-    else lista.push(novo);
+    const { error } = id
+      ? await supabase.from('relatorios').update(registro).eq('id', id)
+      : await supabase.from('relatorios').insert(registro);
 
-    salvarRelatoriosLS(lista);
+    btnSalvar.disabled = false;
+    btnSalvar.textContent = 'Salvar relatório';
+
+    if (error) { console.error(error); mostrarToast('Erro ao salvar relatório.', 'erro'); return; }
+
     fecharModal();
-    renderTabelaPC();
-    renderDashboard();
+    await renderTabelaPC();
+    await renderDashboard();
     mostrarToast('Relatório salvo com sucesso!', 'verde');
   }
 
@@ -731,19 +772,15 @@
     const file = input.files[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) { alert('Arquivo muito grande. Máximo 10MB.'); return; }
-    arquivoNomeAtual = file.name;
-    const reader = new FileReader();
-    reader.onload = e => {
-      arquivoBase64 = e.target.result;
-      document.getElementById('arquivo-nome').textContent = file.name;
-      document.getElementById('arquivo-selecionado').style.display = 'flex';
-    };
-    reader.readAsDataURL(file);
+    arquivoNovoFile = file;
+    arquivoRemovido = false;
+    document.getElementById('arquivo-nome').textContent = file.name;
+    document.getElementById('arquivo-selecionado').style.display = 'flex';
   }
 
   function removerArquivo() {
-    arquivoBase64 = null;
-    arquivoNomeAtual = null;
+    arquivoNovoFile = null;
+    arquivoRemovido = true;
     document.getElementById('arquivo-selecionado').style.display = 'none';
     document.getElementById('field-arquivo-input').value = '';
   }
@@ -773,12 +810,16 @@
     mostrarToast('Dados salvos!', 'verde');
   }
 
-  function salvarSenha() {
+  async function salvarSenha() {
     const nova = document.getElementById('conf-nova-senha').value;
     const conf = document.getElementById('conf-conf-senha').value;
     if (!nova || nova.length < 8) { alert('A senha deve ter pelo menos 8 caracteres.'); return; }
     if (nova !== conf) { alert('As senhas não coincidem.'); return; }
-    mostrarToast('Senha atualizada! Lembre de anotar.', 'verde');
+
+    const { error } = await supabase.auth.updateUser({ password: nova });
+    if (error) { console.error(error); mostrarToast('Erro ao atualizar senha: ' + error.message, 'erro'); return; }
+
+    mostrarToast('Senha atualizada com sucesso!', 'verde');
     document.getElementById('conf-nova-senha').value = '';
     document.getElementById('conf-conf-senha').value = '';
   }
@@ -795,7 +836,8 @@
   }
 
   // ── INIT ──────────────────────────────────────────────────────
-  renderDashboard();
+  // (renderDashboard já é chamado dentro de protegerPagina(), após
+  // confirmar que existe uma sessão de login válida)
 
   // Fechar modal clicando fora
   document.getElementById('modalOverlay').addEventListener('click', function(e) {
