@@ -113,10 +113,10 @@
     // políticas configuradas no banco de dados (RLS).
     const SUPABASE_URL = 'https://yaioclkjtulvlspxntju.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_65RexbhxK3sN_Q0-bjLcBg_kGaJ3FyN';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Se já tem sessão ativa, pula direto pro painel
-    supabase.auth.getSession().then(({ data }) => {
+    supabaseClient.auth.getSession().then(({ data }) => {
       if (data.session) window.location.href = 'admin-painel.html';
     });
 
@@ -137,7 +137,7 @@
       btn.disabled = true;
       btn.textContent = 'Entrando...';
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password: senha });
 
       if (error) {
         erro.textContent = 'E-mail ou senha incorretos.';

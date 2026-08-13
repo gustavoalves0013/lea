@@ -1246,7 +1246,7 @@
   // ── CONEXÃO COM O SUPABASE ─────────────────────────────────────
   const SUPABASE_URL = 'https://yaioclkjtulvlspxntju.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_65RexbhxK3sN_Q0-bjLcBg_kGaJ3FyN';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const MESES_N = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
   let relatoriosCache = [];
@@ -1254,7 +1254,7 @@
   async function carregarRelatorios() {
     // A política do banco já garante que só relatórios "publicado"
     // são retornados para quem não está logado.
-    const { data, error } = await supabase.from('relatorios').select('*');
+    const { data, error } = await supabaseClient.from('relatorios').select('*');
     if (error) { console.error(error); return []; }
     relatoriosCache = data;
     return data;

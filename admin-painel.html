@@ -536,13 +536,13 @@
   // ── CONEXÃO COM O SUPABASE ─────────────────────────────────────
   const SUPABASE_URL = 'https://yaioclkjtulvlspxntju.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_65RexbhxK3sN_Q0-bjLcBg_kGaJ3FyN';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   // ── AUTENTICAÇÃO ──────────────────────────────────────────────
   let usuario = null;
 
   async function protegerPagina() {
-    const { data } = await supabase.auth.getSession();
+    const { data } = await supabaseClient.auth.getSession();
     if (!data.session) { window.location.href = 'admin-login.html'; return; }
     usuario = data.session.user.email;
     document.getElementById('userName').textContent = usuario;
@@ -553,7 +553,7 @@
   protegerPagina();
 
   async function sair() {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     window.location.href = 'admin-login.html';
   }
 
@@ -562,7 +562,7 @@
   let relatoriosCache = [];
 
   async function carregarRelatorios() {
-    const { data, error } = await supabase.from('relatorios').select('*');
+    const { data, error } = await supabaseClient.from('relatorios').select('*');
     if (error) { console.error(error); mostrarToast('Erro ao carregar dados.', 'erro'); return []; }
     relatoriosCache = data;
     return data;
@@ -700,7 +700,7 @@
 
   async function excluirRelatorio(id) {
     if (!confirm('Tem certeza que deseja excluir este relatório? Esta ação não pode ser desfeita.')) return;
-    const { error } = await supabase.from('relatorios').delete().eq('id', id);
+    const { error } = await supabaseClient.from('relatorios').delete().eq('id', id);
     if (error) { console.error(error); mostrarToast('Erro ao excluir.', 'erro'); return; }
     await renderTabelaPC();
     await renderDashboard();
@@ -719,7 +719,7 @@
     // Se o usuário escolheu um arquivo novo, envia pro storage primeiro
     if (arquivoNovoFile) {
       const nomeArquivo = `${Date.now()}_${arquivoNovoFile.name}`;
-      const { error: erroUpload } = await supabase.storage
+      const { error: erroUpload } = await supabaseClient.storage
         .from('relatorios-arquivos')
         .upload(nomeArquivo, arquivoNovoFile);
       if (erroUpload) {
@@ -729,7 +729,7 @@
         btnSalvar.textContent = 'Salvar relatório';
         return;
       }
-      const { data: pub } = supabase.storage.from('relatorios-arquivos').getPublicUrl(nomeArquivo);
+      const { data: pub } = supabaseClient.storage.from('relatorios-arquivos').getPublicUrl(nomeArquivo);
       arquivoUrlAtual = pub.publicUrl;
       arquivoNomeAtual = arquivoNovoFile.name;
     }
@@ -753,8 +753,8 @@
     };
 
     const { error } = id
-      ? await supabase.from('relatorios').update(registro).eq('id', id)
-      : await supabase.from('relatorios').insert(registro);
+      ? await supabaseClient.from('relatorios').update(registro).eq('id', id)
+      : await supabaseClient.from('relatorios').insert(registro);
 
     btnSalvar.disabled = false;
     btnSalvar.textContent = 'Salvar relatório';
@@ -816,7 +816,7 @@
     if (!nova || nova.length < 8) { alert('A senha deve ter pelo menos 8 caracteres.'); return; }
     if (nova !== conf) { alert('As senhas não coincidem.'); return; }
 
-    const { error } = await supabase.auth.updateUser({ password: nova });
+    const { error } = await supabaseClient.auth.updateUser({ password: nova });
     if (error) { console.error(error); mostrarToast('Erro ao atualizar senha: ' + error.message, 'erro'); return; }
 
     mostrarToast('Senha atualizada com sucesso!', 'verde');
